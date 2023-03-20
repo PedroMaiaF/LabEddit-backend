@@ -18,7 +18,7 @@ describe("login", () => {
     test("login bem-sucedido em conta normal retorna token", async () => {
         const input = {
             email: "normal@email.com",
-            password: "Back3nd$"
+            password: "B@ckEnd1"
         }
 
         const response = await userBusiness.login(input)
@@ -28,7 +28,7 @@ describe("login", () => {
     test("login bem-sucedido em conta admin retorna token", async () => {
         const input: LoginInputDTO = {
             email: "admin@email.com",
-            password: "Back3nd$"
+            password: "B@ckEnd1"
         }
 
         const response = await userBusiness.login(input)
@@ -43,7 +43,7 @@ describe("login", () => {
 
             const input: LoginInputDTO = {
                 email: null,
-                password: "Back3nd$" 
+                password: "B@ckEnd1" 
             }
 
             await userBusiness.login(input)
@@ -85,7 +85,7 @@ describe("login", () => {
 
             const input: LoginInputDTO = {
                 email: "unknown@email.com",
-                password: "Back3nd$" 
+                password: "B@ckEnd1" 
             }
 
             await userBusiness.login(input)
@@ -105,7 +105,7 @@ describe("login", () => {
 
             const input: LoginInputDTO = {
                 email: "normal@email.com",
-                password: "Digimon$" 
+                password: "Pokemon$" 
             }
 
             await userBusiness.login(input)

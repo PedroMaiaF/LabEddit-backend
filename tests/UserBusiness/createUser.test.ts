@@ -21,7 +21,7 @@ describe("createUser", () => {
         const input: CreateUserInputDTO = {
             nickName: "Example Mock",
             email: "example@email.com",
-            password: "Back3nd$"
+            password: "B@ckEnd1"
         }
 
         const response = await userBusiness.createUser(input)
@@ -36,7 +36,7 @@ describe("createUser", () => {
             const input: CreateUserInputDTO = {
                 email: "example@email.com",
                 nickName: null,
-                password: "Back3nd$"
+                password: "B@ckEnd1"
             }
 
             await userBusiness.createUser(input)
@@ -56,7 +56,7 @@ describe("createUser", () => {
             const input: CreateUserInputDTO = {
                 email: null,
                 nickName: "Example Mock",
-                password: "Back3nd$"
+                password: "B@ckEnd1"
             }
 
             await userBusiness.createUser(input)
@@ -96,7 +96,7 @@ describe("createUser", () => {
         const input: CreateUserInputDTO = {
             email: "normal@email.com",
             nickName: "Example Mock",
-            password: "Back3nd$"
+            password: "B@ckEnd1"
         }
         
         expect(async () => {
@@ -115,7 +115,7 @@ describe("createUser", () => {
         const input: CreateUserInputDTO = {
             email: "normalemail.gov.eu",
             nickName: "Example Mock",
-            password: "Back3nd$"
+            password: "B@ckEnd1"
         }
         
         // expect(async () => {
