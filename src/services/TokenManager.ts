@@ -1,12 +1,12 @@
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
-import { TokenPayload } from '../types'
+import { TokenPayLoad } from '../types'
 
 dotenv.config()
 
 export class TokenManager {
 
-    public createToken = (payload: TokenPayload): string => {
+    public createToken = (payload: TokenPayLoad): string => {
         const token = jwt.sign(
             payload,
             process.env.JWT_KEY as string,
@@ -18,14 +18,14 @@ export class TokenManager {
         return token
     }
 
-    public getPayload = (token: string): TokenPayload | null => {
+    public getPayload = (token: string): TokenPayLoad | null => {
         try {
             const payload = jwt.verify(
                 token,
                 process.env.JWT_KEY as string
             )
 
-            return payload as TokenPayload
+            return payload as TokenPayLoad
 
         } catch (error) {
             return null
