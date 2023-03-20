@@ -1,18 +1,46 @@
-import { CreatorPost, PostModel, PostDB } from "../types"
-
+import { PostCreatorModel, PostDB } from "../types"
 
 export class Post {
     constructor(
-       private id: string,
-       private content: string,
-       private likes: number,
-       private dislikes: number,
-       private createdAt: string,
-       private updatedAt: string,
-       private creatorId: string,
-       private creatorName: string
+        private id: string,
+        private content: string,
+        private likes: number,
+        private dislikes: number,
+        private replies: number,
+        private createdAt: string,
+        private updatedAt: string,
+        private creator: {
+            id: string,
+            nickName: string
+        }
     ) {}
-    
+
+    public toDBModel(): PostDB {
+        return { 
+            id: this.id,
+            content: this.content,
+            likes: this.likes,
+            dislikes: this.dislikes,
+            replies: this.replies,
+            created_at: this.createdAt,
+            updated_at: this.updatedAt,
+            creator_id: this.creator.id,
+        }       
+    }
+
+    public toBusinessModel(): PostCreatorModel {
+        return{
+            id: this.id,
+            content: this.content,
+            likes: this.likes,
+            dislikes: this.dislikes,
+            replies: this.replies,
+            createdAt: this.createdAt,
+            updatedAt: this.updatedAt,
+            creator: this.creator
+        }
+    }
+
     public getId(): string {
         return this.id
     }
@@ -28,7 +56,6 @@ export class Post {
     public setContent(value: string): void {
         this.content = value
     }
-
     public getLikes(): number {
         return this.likes
     }
@@ -41,15 +68,15 @@ export class Post {
         this.likes += 1
     }
 
-    public removeLike () {
+    public removeLike() {
         this.likes -= 1
     }
 
-    public addDislike () {
+    public addDislike() {
         this.dislikes += 1
     }
 
-    public removeDislike () {
+    public removeDislike() {
         this.dislikes -= 1
     }
 
@@ -59,6 +86,22 @@ export class Post {
 
     public setDislikes(value: number): void {
         this.dislikes = value
+    }
+
+    public getReplies(): number {
+        return this.replies
+    }
+
+    public setReplies(value: number): void {
+        this.replies = value
+    }
+
+    public addReply() {
+        this.replies += 1
+    }
+
+    public removeReply() {
+        this.replies -= 1
     }
 
     public getCreatedAt(): string {
@@ -77,45 +120,17 @@ export class Post {
         this.updatedAt = value
     }
     
-    public getCreatorId(): string {
-        return this.creatorId
+    public getCreator(): {
+        id: string,
+        nickName: string
+    } {
+        return this.creator
     }
 
-    public setCreatorId(value: string): void {
-        this.creatorId = value
-    }
-    
-    public getCreatorName(): string {
-        return this.creatorName
-    }
-
-    public setCreatorName(value: string): void {
-        this.creatorName = value
-    }
-  
-    public toDBModel(): PostDB {
-        return { 
-            id: this.id,
-            content: this.content,
-            likes: this.likes,
-            dislikes: this.dislikes,
-            created_at: this.createdAt,
-            updated_at: this.updatedAt,
-            creator_id: this.creatorId
-        }       
-    }
-
-
-    public toBusinessModel(): PostModel {
-        return{
-            id: this.id,
-            content: this.content,
-            likes: this.likes,
-            dislikes: this.dislikes,
-            createdAt: this.createdAt,
-            updatedAt: this.updatedAt,
-            creator: {id: this.creatorId,
-                    name: this.creatorName
-            }}
+    public setCreator(value: {
+        id: string,
+        nickName: string
+    } ): void {
+        this.creator = value
     }
 }
