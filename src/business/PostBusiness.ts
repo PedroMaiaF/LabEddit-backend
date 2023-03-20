@@ -1,11 +1,11 @@
 import { PostDatabase } from "../database/PostDatabase"
-import { CreatePostInputDTO, DeletePostInputDTO, EditPostInputDTO, GetPostCreatorOutputDTO, GetPostsInputDTO, LikeOrDislikePostInputDTO, PostDTO } from "../dtos/PostDTO"
+import { CreatePostInputDTO, DeletePostInputDTO, EditPostInputDTO, GetPostByIdInputDTO, GetPostsInputDTO, LikeOrDislikePostInputDTO } from "../dtos/postDTO"
 import { BadRequestError } from "../errors/BadRequestError"
 import { NotFoundError } from "../errors/NotFoundError"
 import { Post } from "../models/Post"
 import { IdGenerator } from "../services/IdGenerator"
 import { TokenManager } from "../services/TokenManager"
-import { CreatorPost,LikeDislikePostDB, PostCreatorModel, PostDB, POST_LIKE, USER_ROLES} from "../types"
+import { CreatorPost, LikeDislikePostDB, PostCreatorModel, PostDB, PostWithCreatorDB, POST_LIKE, USER_ROLES } from "../types"
 
 
 export class PostBusiness {
@@ -66,6 +66,61 @@ export class PostBusiness {
          }
         
         return posts
+    }
+
+    public getPostById = async (input: GetPostByIdInputDTO): Promise<PostCreatorModel> => {
+        
+        const { id, token } = input
+
+                
+        if(token === undefined) {
+            throw new BadRequestError("token ausente")
+        }
+
+        const payload = this.tokenManager.getPayload(token)
+
+        if(payload === null) {
+            throw new BadRequestError("token inválido")
+        }
+
+        const postWithCreatorDB: PostWithCreatorDB = 
+            await this.postDatabase.getPostWithCreatorById(id)
+
+        
+        if(!postWithCreatorDB) {
+            throw new NotFoundError("'id' do post não encontrado.")   
+        }
+
+        const userId = payload.id
+        const creatorId = postWithCreatorDB.creator_id
+        const creatorNickName = postWithCreatorDB.creator_nick_name
+        
+        if(postWithCreatorDB.creator_id === userId) {
+            throw new BadRequestError("O criador do post não pode dar like ou dislike em seu próprio post")
+        }   
+                        
+        function getCreator(creatorId: string, creatorNickName: string): CreatorPost {
+            return {
+                id: creatorId,
+                nickName: creatorNickName
+            }
+         }
+
+        const post = new Post(
+            postWithCreatorDB.id,
+            postWithCreatorDB.content,
+            postWithCreatorDB.likes,
+            postWithCreatorDB.dislikes,
+            postWithCreatorDB.replies,
+            postWithCreatorDB.created_at,
+            postWithCreatorDB.updated_at,
+            getCreator(creatorId, creatorNickName)
+        )
+
+        const postToBusinesModel = post.toBusinessModel()
+                    
+        return postToBusinesModel       
+    
     }
 
     public createPost = async (input: CreatePostInputDTO): Promise<void> => {
