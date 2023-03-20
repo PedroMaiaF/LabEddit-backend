@@ -9,13 +9,14 @@ import { TokenManager } from "../services/TokenManager"
 export const userRouter = express.Router()
 
 const userController = new UserController(
-    new UserBusiness(
-        new UserDatabase(),
-        new IdGenerator(),
-        new TokenManager(),
-        new HashManager()
-    )
+   new UserBusiness(
+      new UserDatabase(),
+      new IdGenerator(),
+      new TokenManager(),
+      new HashManager()
+   )
 )
 
-userRouter.post("/signup", userController.signup)
+userRouter.get("/", userController.getUsers)
+userRouter.post("/signup", userController.createUser)
 userRouter.post("/login", userController.login)
