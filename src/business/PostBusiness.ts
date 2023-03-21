@@ -5,7 +5,15 @@ import { NotFoundError } from "../errors/NotFoundError"
 import { Post } from "../models/Post"
 import { IdGenerator } from "../services/IdGenerator"
 import { TokenManager } from "../services/TokenManager"
-import { CreatorPost, LikeDislikePostDB, PostCreatorModel, PostDB, PostWithCreatorDB, POST_LIKE, USER_ROLES } from "../types"
+import { 
+        CreatorPost, 
+        LikeDislikePostDB, 
+        PostCreatorModel, 
+        PostDB, 
+        PostWithCreatorDB, 
+        POST_LIKE, 
+        USER_ROLES 
+    } from "../types"
 
 
 export class PostBusiness {
