@@ -1,6 +1,6 @@
 export class HashManagerMock {
     public hash = async (plaintext: string): Promise<string> => {
-        if (plaintext == "Back3nd$") {
+        if (plaintext == "B@ckEnd1") {
             return "hash-backend"
         }
 
@@ -8,7 +8,7 @@ export class HashManagerMock {
     }
 
     public compare = async (plaintext: string, hash: string): Promise<boolean> => {
-        if (plaintext == "Back3nd$" && hash == "hash-backend") {
+        if (plaintext == "B@ckEnd1" && hash == "hash-backend") {
             return true
         }
 
