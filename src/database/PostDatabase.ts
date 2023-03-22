@@ -1,7 +1,5 @@
-import { LikeDislikePostDB, PostDB, PostWithCommentsDB, PostWithCreatorDB, POST_LIKE } from "../types";
-import { BaseDatabase } from "./BaseDatabase";
-import { CommentDatabase } from "./CommentDatabase";
-import { UserDatabase } from "./UserDatabase";
+import { LikeDislikePostDB, PostDB, PostWithCreatorDB, POST_LIKE, UserDB } from "../types"
+import { BaseDatabase } from "./BaseDatabase"
 
 
 export class PostDatabase extends BaseDatabase {
@@ -9,7 +7,7 @@ export class PostDatabase extends BaseDatabase {
     public static TABLE_COMMENTS = "comments"
     public static TABLE_LIKES_DISLIKES_POSTS = "likes_dislikes_post"
 
-    public getAllPosts = async () => {
+    public getAllPosts = async (): Promise<PostDB[]> => {
         const postsDB = await BaseDatabase
             .connection(PostDatabase.TABLE_POSTS)
             .select()
@@ -17,7 +15,7 @@ export class PostDatabase extends BaseDatabase {
         return postsDB
     }
 
-    public getPostsByContent = async (q: string) => {
+    public getPostsByContent = async (q: string): Promise<PostDB[]> => {
         const postDB = await BaseDatabase
             .connection(PostDatabase.TABLE_POSTS)
             .where("content", "LIKE", `%${q}%`)
@@ -25,46 +23,40 @@ export class PostDatabase extends BaseDatabase {
         return postDB
 
     }
-    
-    public getPostWithCreator = async (q: string | undefined) => {
+
+
+    public getPost = async (q: string | undefined): Promise<PostDB[]> => {
         let postsDB: PostDB[]
 
-        if(q) {
+        if (q) {
             postsDB = await this.getPostsByContent(q)
         } else {
             postsDB = await this.getAllPosts()
         }
 
-        const creatorsDB = await BaseDatabase
-            .connection(UserDatabase.TABLE_USERS)
-            .select()
-
-        return{
-            postsDB,
-            creatorsDB
-        }
+        return postsDB
     }
 
-    public insert = async (postDB: PostDB) => {
+    public insert = async (postDB: PostDB): Promise<void> => {
         await BaseDatabase
             .connection(PostDatabase.TABLE_POSTS)
             .insert(postDB)
-    }  
+    }
 
-    public searchPostById = async (id: string) => {
+    public searchPostById = async (id: string): Promise<PostDB | undefined> => {
         const result: PostDB[] = await BaseDatabase
             .connection(PostDatabase.TABLE_POSTS)
             .select()
             .where({ id })
 
-        return result[0]        
+        return result[0]
     }
 
     public updatePost = async (idToEdit: string, updatedPostDB: PostDB): Promise<void> => {
         await BaseDatabase
             .connection(PostDatabase.TABLE_POSTS)
             .update(updatedPostDB)
-            .where({ id: idToEdit })    
+            .where({ id: idToEdit })
     }
 
     public deletePost = async (idToDelete: string): Promise<void> => {
@@ -73,8 +65,9 @@ export class PostDatabase extends BaseDatabase {
             .delete()
             .where({ id: idToDelete })
     }
-    public getPostWithCreatorById = async (postId: string): Promise<PostWithCreatorDB> => {
-        const result: PostWithCreatorDB[] =  await BaseDatabase
+
+    public getPostWithCreatorById = async (postId: string): Promise<PostWithCreatorDB | undefined> => {
+        const result: PostWithCreatorDB[] = await BaseDatabase
             .connection(PostDatabase.TABLE_POSTS)
             .select(
                 "posts.id",
@@ -88,10 +81,9 @@ export class PostDatabase extends BaseDatabase {
                 "users.nick_name AS creator_nick_name"
             )
             .join("users", "posts.creator_id", "=", "users.id")
-            .where(`posts.id`, postId )
-            
-            return result[0] 
-        
+            .where(`posts.id`, postId)
+
+        return result[0]
     }
 
     public likeOrDislikePost = async (likeDislikePostDB: LikeDislikePostDB): Promise<void> => {
@@ -101,7 +93,7 @@ export class PostDatabase extends BaseDatabase {
     }
 
     public searchLikeDislike = async (likeDislikePostDBToFind: LikeDislikePostDB): Promise<POST_LIKE | null> => {
-        const [ likeDislikePostDB ]: LikeDislikePostDB[] = await BaseDatabase
+        const [likeDislikePostDB]: LikeDislikePostDB[] = await BaseDatabase
             .connection(PostDatabase.TABLE_LIKES_DISLIKES_POSTS)
             .select()
             .where({
@@ -109,7 +101,7 @@ export class PostDatabase extends BaseDatabase {
                 post_id: likeDislikePostDBToFind.post_id
             })
 
-        if(likeDislikePostDB) {
+        if (likeDislikePostDB) {
             return likeDislikePostDB.like === 1 ? POST_LIKE.ALREADY_LIKED : POST_LIKE.ALREADY_DISLIKED
         } else {
             return null
@@ -117,7 +109,7 @@ export class PostDatabase extends BaseDatabase {
 
     }
 
-    public removeLikeDislike = async (likeDislikePostDB :LikeDislikePostDB) => {
+    public removeLikeDislike = async (likeDislikePostDB: LikeDislikePostDB): Promise<void> => {
         await BaseDatabase
             .connection(PostDatabase.TABLE_LIKES_DISLIKES_POSTS)
             .delete()
@@ -127,7 +119,7 @@ export class PostDatabase extends BaseDatabase {
             })
     }
 
-    public updateLikeDislike = async (likeDislikePostDB: LikeDislikePostDB) => {
+    public updateLikeDislike = async (likeDislikePostDB: LikeDislikePostDB): Promise<void> => {
         await BaseDatabase
             .connection(PostDatabase.TABLE_LIKES_DISLIKES_POSTS)
             .update(likeDislikePostDB)
@@ -136,6 +128,6 @@ export class PostDatabase extends BaseDatabase {
                 post_id: likeDislikePostDB.post_id
             })
     }
-    
+
 
 }
