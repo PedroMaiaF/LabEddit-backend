@@ -6,23 +6,24 @@ import { BaseError } from "../errors/BaseError"
 export class CommentController {
     constructor(
         private commentBusiness: CommentBusiness
-    ) {}
+    ) { }
 
-    public getComments = async (req: Request, res: Response) => {
+
+    public getPostComments = async (req: Request, res: Response) => {
         try {
             const input: GetCommentsInputDTO = {
                 token: req.headers.authorization,
                 idToReply: req.params.id
             }
 
-            const output = await this.commentBusiness.getComments(input)
+            const output = await this.commentBusiness.getPostComments(input)
 
             res.status(200).send(output)
 
         } catch (error) {
             console.log(error)
 
-            if(error instanceof BaseError) {
+            if (error instanceof BaseError) {
                 res.status(error.statusCode).send(error.message)
             } else {
                 res.status(500).send("Erro inesperado")
@@ -39,7 +40,7 @@ export class CommentController {
             }
 
             await this.commentBusiness.createComment(input)
-            
+
             const output: CreateCommentOutputDTO = {
                 message: "Comentário criado com sucesso"
             }
@@ -49,7 +50,7 @@ export class CommentController {
         } catch (error) {
             console.log(error)
 
-            if(error instanceof BaseError) {
+            if (error instanceof BaseError) {
                 res.status(error.statusCode).send(error.message)
             } else {
                 res.status(500).send("Erro inesperado")
@@ -67,7 +68,7 @@ export class CommentController {
             await this.commentBusiness.deleteComment(input)
 
             const output: DeleteCommentOutputDTO = {
-                message: "Comentário apagado com sucesso!"
+                message: "Comentário apagado com sucesso"
             }
 
             res.status(200).send(output)
@@ -75,7 +76,7 @@ export class CommentController {
         } catch (error) {
             console.log(error)
 
-            if(error instanceof BaseError) {
+            if (error instanceof BaseError) {
                 res.status(error.statusCode).send(error.message)
             } else {
                 res.status(500).send("Erro inesperado")
@@ -98,7 +99,7 @@ export class CommentController {
         } catch (error) {
             console.log(error)
 
-            if(error instanceof BaseError) {
+            if (error instanceof BaseError) {
                 res.status(error.statusCode).send(error.message)
             } else {
                 res.status(500).send("Erro inesperado")

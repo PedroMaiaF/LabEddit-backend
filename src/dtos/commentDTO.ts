@@ -32,6 +32,18 @@ export interface GetPostWithCommentsOutputDTO {
     } 
 }
 
+export interface GetCommentsOutputDTO {            
+    id: string,
+    content: string,
+    likes: number,
+    dislikes: number,
+    commentCreatedAt: string,
+    commentUpdatedAt: string,
+    commentCreatorId: string,
+    postId: string,
+    commentCreatorNickName: string
+}
+
 export interface CreateCommentInputDTO {
     token: string | undefined,
     content: unknown,
