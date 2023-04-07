@@ -1,4 +1,4 @@
-import { GetCommentsOutputDTO } from "../dtos/comment2DTO"
+import { GetCommentsOutputDTO } from "../dtos/commentDTO"
 import { CommentDB, CommentWithCreatorNameDB, LikeDislikePostCommentDB, PostWithCommentsDB, PostWithCreatorDB, POST_LIKE } from "../types"
 import { BaseDatabase } from "./BaseDatabase"
 import { PostDatabase } from "./PostDatabase"
