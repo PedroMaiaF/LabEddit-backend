@@ -1,7 +1,16 @@
 import { Request, Response } from "express";
 import { PostBusiness } from "../business/PostBusiness";
-import { CreatePostInputDTO, CreatePostOutputDTO, DeletePostInputDTO, DeletePostOutputDTO, EditPostInputDTO, EditPostOutputDTO, GetPostByIdInputDTO, GetPostsInputDTO, LikeOrDislikePostInputDTO } from "../dtos/postDTO";
 import { BaseError } from "../errors/BaseError";
+import { 
+        CreatePostInputDTO, 
+        CreatePostOutputDTO, 
+        DeletePostInputDTO, 
+        DeletePostOutputDTO, 
+        EditPostInputDTO, 
+        EditPostOutputDTO, 
+        GetPostByIdInputDTO, 
+        LikeOrDislikePostInputDTO 
+    } from "../dtos/PostDTO";
 
 
 export class PostController {
@@ -11,7 +20,7 @@ export class PostController {
 
     public getPosts = async (req: Request, res: Response) => {
         try {
-            const input: GetPostsInputDTO = {
+            const input: any = {
                 q: req.query.q,
                 token: req.headers.authorization
             }

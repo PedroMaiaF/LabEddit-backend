@@ -1,5 +1,6 @@
 import { PostDatabase } from "../database/PostDatabase"
-import { CreatePostInputDTO, DeletePostInputDTO, EditPostInputDTO, GetPostByIdInputDTO, GetPostsInputDTO, LikeOrDislikePostInputDTO } from "../dtos/postDTO"
+import { UserDatabase } from "../database/UserDatabase"
+import { CreatePostInputDTO, CreatePostOutputDTO, DeletePostInputDTO, DeletePostOutputDTO, EditPostInputDTO, EditPostOutputDTO, GetPostByIdInputDTO, LikeOrDislikePostInputDTO } from "../dtos/PostDTO"
 import { BadRequestError } from "../errors/BadRequestError"
 import { NotFoundError } from "../errors/NotFoundError"
 import { Post } from "../models/Post"
@@ -12,6 +13,8 @@ import {
         PostDB, 
         PostWithCreatorDB, 
         POST_LIKE, 
+        TokenPayLoad, 
+        UserDB, 
         USER_ROLES 
     } from "../types"
 
@@ -19,18 +22,16 @@ import {
 export class PostBusiness {
     constructor(
         private postDatabase: PostDatabase,
+        private userDatabase: UserDatabase,
         private tokenManager: TokenManager,
         private idGenerator: IdGenerator
     ) {}
 
-    public getPosts = async (input: GetPostsInputDTO): Promise<PostCreatorModel[]> => {
+    public getPosts = async (input: any): Promise<PostCreatorModel[]> => {
         
         const { q, token } = input
 
-        if(typeof q !== "string") {
-            throw new BadRequestError("'q' deve ser string")
-        }
-        
+              
         if(token === undefined) {
             throw new BadRequestError("token ausente")
         }
@@ -40,13 +41,24 @@ export class PostBusiness {
         if(payload === null) {
             throw new BadRequestError("token inválido")
         }
+       
+        const postsDB: PostDB[] = await this.postDatabase.getPost(q)
 
-        const { 
-            postsDB,
-            creatorsDB
-        } = await this.postDatabase.getPostWithCreator(q)
+        const creatorsDB: UserDB[] = await this.userDatabase.findUsers(q)
 
+     
         const posts: PostCreatorModel[] = postsDB.map((postDB) => {
+            const userSearch = creatorsDB.find((creatorDB) => creatorDB.id === postDB.creator_id)
+                if(!userSearch) {
+                    throw new BadRequestError("usuário não econtrado")
+                }
+
+                const user: TokenPayLoad = {
+                    id: userSearch.id,
+                    nickName: userSearch.nick_name,
+                    role: userSearch.role
+                }
+            
             const post = new Post(
                 postDB.id,
                 postDB.content,
@@ -55,24 +67,15 @@ export class PostBusiness {
                 postDB.replies,
                 postDB.created_at,
                 postDB.updated_at,
-                getCreator(postDB.creator_id)
-            )
+                user            
+                )
 
             const postToBusinesModel = post.toBusinessModel()
                       
             return postToBusinesModel
         })
     
-        function getCreator(creatorId: string): CreatorPost {
-            const creator = creatorsDB.find((creatorDB)  => {
-                return creatorDB.id === creatorId
-            })
-            return {
-                id: creator.id,
-                nickName: creator.nick_name
-            }
-         }
-        
+                
         return posts
     }
 
@@ -91,10 +94,9 @@ export class PostBusiness {
             throw new BadRequestError("token inválido")
         }
 
-        const postWithCreatorDB: PostWithCreatorDB = 
+        const postWithCreatorDB: PostWithCreatorDB | undefined = 
             await this.postDatabase.getPostWithCreatorById(id)
 
-        
         if(!postWithCreatorDB) {
             throw new NotFoundError("'id' do post não encontrado.")   
         }
@@ -102,11 +104,7 @@ export class PostBusiness {
         const userId = payload.id
         const creatorId = postWithCreatorDB.creator_id
         const creatorNickName = postWithCreatorDB.creator_nick_name
-        
-        if(postWithCreatorDB.creator_id === userId) {
-            throw new BadRequestError("O criador do post não pode dar like ou dislike em seu próprio post")
-        }   
-                        
+                                        
         function getCreator(creatorId: string, creatorNickName: string): CreatorPost {
             return {
                 id: creatorId,
@@ -131,7 +129,7 @@ export class PostBusiness {
     
     }
 
-    public createPost = async (input: CreatePostInputDTO): Promise<void> => {
+    public createPost = async (input: CreatePostInputDTO): Promise<CreatePostOutputDTO> => {
         
         const { content, token } = input
        
@@ -147,6 +145,10 @@ export class PostBusiness {
 
         if(typeof content !== "string") {
             throw new BadRequestError("'content' deve ser string")
+        }
+
+        if(content.length < 4) {
+            throw new BadRequestError("'content' deve possuir no mínimo 4 caracteres")            
         }
 
         const id = this.idGenerator.generate()
@@ -176,9 +178,15 @@ export class PostBusiness {
 
         await this.postDatabase.insert(postDB)
 
+        const output: CreatePostOutputDTO = {
+            message: "Post criado com sucesso!"
+        }
+
+        return output
+
     }
 
-    public editPost = async (input: EditPostInputDTO): Promise<void> => {
+    public editPost = async (input: EditPostInputDTO): Promise<EditPostOutputDTO> => {
         
         const { idToEdit, content, token } = input
        
@@ -235,9 +243,14 @@ export class PostBusiness {
 
         await this.postDatabase.updatePost(idToEdit, updatedPostDB)
 
+        const output: EditPostOutputDTO = {
+            message: "Post editado com sucesso"
+        }
+
+        return output
     }
 
-    public deletePost = async (input: DeletePostInputDTO): Promise<void> => {
+    public deletePost = async (input: DeletePostInputDTO): Promise<DeletePostOutputDTO> => {
         
         const { idToDelete, token } = input
        
@@ -268,6 +281,11 @@ export class PostBusiness {
 
         await this.postDatabase.deletePost(idToDelete)
 
+        const output: DeletePostOutputDTO = {
+            message: "Post apagado com sucesso!"
+        }
+
+        return output
     }
 
     public likeOrDislikePost = async (input: LikeOrDislikePostInputDTO): Promise<void> => {

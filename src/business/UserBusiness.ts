@@ -52,7 +52,8 @@ export class UserBusiness {
     public createUser = async (input: CreateUserInputDTO) => {
         
         const { nickName, email, password } = input
-                
+        
+        
         if (typeof nickName !== "string") {
             throw new BadRequestError("'nickName' deve ser string")
         }
@@ -116,7 +117,7 @@ export class UserBusiness {
     public login = async (input: LoginInputDTO): Promise<LoginOutputDTO> => {
         
         const { email, password } = input
-        
+                
         if (typeof email !== "string") {
             throw new BadRequestError("'email' deve ser string")
         }
@@ -163,6 +164,5 @@ export class UserBusiness {
 
         return output
     }
-
 
 }
