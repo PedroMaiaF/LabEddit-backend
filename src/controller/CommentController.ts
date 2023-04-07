@@ -1,6 +1,6 @@
 import { Request, Response } from "express"
 import { CommentBusiness } from "../business/CommentBusiness"
-import { CreateCommentInputDTO, CreateCommentOutputDTO, DeleteCommentInputDTO, DeleteCommentOutputDTO, GetCommentsInputDTO, LikeOrDislikeCommentInputDTO } from "../dtos/comment2DTO"
+import { CreateCommentInputDTO, CreateCommentOutputDTO, DeleteCommentInputDTO, DeleteCommentOutputDTO, GetCommentsInputDTO, LikeOrDislikeCommentInputDTO } from "../dtos/commentDTO"
 import { BaseError } from "../errors/BaseError"
 
 export class CommentController {
