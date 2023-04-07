@@ -1,6 +1,6 @@
 import { CommentDatabase } from "../database/CommentDatabase"
 import { PostDatabase } from "../database/PostDatabase"
-import { CreateCommentInputDTO, CreateCommentOutputDTO, DeleteCommentInputDTO, DeleteCommentOutputDTO, GetCommentsInputDTO, GetCommentsOutputDTO, LikeOrDislikeCommentInputDTO } from "../dtos/commentDTO"
+import { CreateCommentInputDTO, CreateCommentOutputDTO, DeleteCommentInputDTO, DeleteCommentOutputDTO, GetCommentsInputDTO, GetCommentsOutputDTO, LikeOrDislikeCommentInputDTO } from "../dtos/comment2DTO"
 import { BadRequestError } from "../errors/BadRequestError"
 import { NotFoundError } from "../errors/NotFoundError"
 import { Comment } from "../models/Comment"

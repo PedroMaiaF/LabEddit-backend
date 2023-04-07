@@ -1,5 +1,5 @@
 import { UserDatabase } from "../database/UserDatabase";
-import { CreateUserInputDTO, CreateUserOutputDTO, LoginInputDTO, LoginOutputDTO } from "../dtos/UserDTO";
+import { CreateUserInputDTO, CreateUserOutputDTO, LoginInputDTO, LoginOutputDTO } from "../dtos/user2DTO";
 import { BadRequestError } from "../errors/BadRequestError";
 import { ConflictError } from "../errors/Conflict";
 import { NotFoundError } from "../errors/NotFoundError";
