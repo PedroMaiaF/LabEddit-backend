@@ -10,7 +10,7 @@ import {
         EditPostOutputDTO, 
         GetPostByIdInputDTO, 
         LikeOrDislikePostInputDTO 
-    } from "../dtos/PostDTO";
+    } from "../dtos/post2DTO";
 
 
 export class PostController {
