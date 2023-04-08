@@ -4,4 +4,4 @@
 
 ## Link do deploy: https://labbedit-backend.onrender.com
 
-## Link do repositório do frontend:
+## Link do repositório do frontend: https://github.com/PedroMaiaF/LabEddit-frontend
